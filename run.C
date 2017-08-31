@@ -21,9 +21,13 @@ TMutex mtx1;
 
 void *findEvts(void *ptr){
   Settings * s = (Settings*) ptr;
-  TFile * f = TFile::Open(s->ppInputFile.c_str(),"read");
+  TFile * f;
+  if(s->isPP) f = TFile::Open(s->ppInputFile.c_str(),"read");
+  else       f = TFile::Open(s->ppInputFile.c_str(),"read");
   TTree * skim = (TTree*)f->Get("skimanalysis/HltTree");
-  TTree * photons = (TTree*)f->Get("ggHiNtuplizerGED/EventTree");  
+  TTree * photons; 
+  if(s->isPP) photons = (TTree*)f->Get("ggHiNtuplizerGED/EventTree");  
+  else        photons = (TTree*)f->Get("ggHiNtuplizer/EventTree");  
   TTree * evt = (TTree*)f->Get("hiEvtAnalyzer/HiTree");
   TTree * hlt = (TTree*)f->Get("hltanalysis/HltTree");
   std::cout << Form("ak%dPFJetAnalyzer/t",s->jetRadiusTimes10) << std::endl;
@@ -163,7 +167,9 @@ void runGrooming(){
   } 
 
   //loading pfcands
-  TFile * f = TFile::Open(s.ppInputFile.c_str(),"read");
+  TFile * f;
+  if(s.isPP) f = TFile::Open(s->ppInputFile.c_str(),"read");
+  else       f = TFile::Open(s->ppInputFile.c_str(),"read");
   TTree * pf = (TTree*)f->Get("pfcandAnalyzer/pfTree");
 
   std::vector< int > * id = 0;
